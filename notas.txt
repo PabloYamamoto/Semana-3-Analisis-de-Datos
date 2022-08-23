@@ -1,0 +1,65 @@
+PASO 1.- MERGE DE LOS ARCHIVOS
+
+Vamos a mergear el Raw-Deliveies.xlsx con el Deliveies_disruptions.xlsx
+
+Nota: Borramos columnas con titulos "ID" en el Deliveies_disruptions porque eran datos repetitivos y no aportaban informacion relevante para el merge, limpieza o analisis de datos. 
+
+Consideraciones:
+    * Para la primer columna en el Deliveies_disruptions, pondremos Nan a los registros del Raw-deliveries ya que no hay dato equivalente en ese mismo archivo 
+    * En el archivo Raw-deliveries, en la columna C "KM2 ID" debemos de eliminar el nombre de la ciudad y dejar solo el ID, para que corresponda con la columna del archivo Deliveies_disruptions
+    * El merge se va a hacer sobre las columnas Deliveries_Disruptions.xlsx - Column C y Raw-Deliveries.xlsx - Column A
+    * Las horas en  Raw-Deliveies están en horas locales y en Deliveies_disruptions están en UTC => Dejar las horas UTC para el merge y trabajar con horas locales para el analisis. 
+        * A las fechas en Raw-Deliveries hay que adjuntarles las horas
+        * Añadir la latitud y la longitud con respecto al shop id del archivo Raw-Shops-Deliveries
+        * Calcular la duracion para ambos archivos en caso de que ese valor en la columna "Duration" venga vacia. 
+    * La columna With Equipment en Raw y la columna Equipment en disruptions represetan lo mismo 
+
+
+
+
+
+PASO 2.- LIMPIEZA DE LOS DATOS
+
+Excel file: Deliveries_disruptions.xlsx
+Column F: 
+       Change the dates to format "mm/dd/yyyy hh:mm:ss" and change the time zone to "UTC"
+       
+Column G: 
+        Same as column F
+Column I: 
+        Remove double quotes
+        Remove non-ascii characters
+        Remove N/A values
+        Make sure they all start with a capital letter
+        Check for misspellings and correct them
+        Similar names should be the same
+        
+        
+        Some strings are writen like "Towels" - need to get rid of that
+        Some strings have weird characters like "â€œ" - need to get rid of that
+        Some strings dont have cappital letters - need to make sure they all have
+        There are 2 registrations: Coca Cola and Coca-Cola - need to make sure they are the same
+        There are misspelled works like "Heinegen" instead of "Heineken" - need to make sure they are the same
+        There are N/A values - maybe we should treat them as Nan or completly remove them
+        There are Unknown values misspelled in many ways - need to make sure they are the same
+        Some companies have their full name and others have a short name - need to make sure they are the same
+        Some strings are like "YTC Express" and others are like "YTCEXPRESS" - need to make sure they are the same
+Column J:
+        Remove double quotes
+        Capitalize
+        Remove non ascii characters
+        Same as Column N
+
+Column M: 
+        For Empty values, dont take them into consideration for the analysis
+Column T:
+        Remove N/A values
+        
+Column AA:
+        There are N/A values - remove them. Maybe count how many entries were deleted?
+        One row has 0 shops served. Change to 1
+
+
+Merge of both files
+    
+ 
