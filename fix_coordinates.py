@@ -15,5 +15,8 @@ longitud_prefix = "-43"
 shops_df = pd.read_excel("./Raw-Shops-Deliveries.xlsx", dtype={"Latitude": str, "Longitude": str})
 
 
-rio = shops_df.loc[shops_df["KM2 ID"] == 22, "Latitude"]
-rio = rio.transform(lambda x: latitud_prefix+"."+str(x).split(latitud_prefix)[1])
+rio_lat = shops_df.loc[shops_df["KM2 ID"] == 22, "Latitude"]
+rio_lon = shops_df.loc[shops_df["KM2 ID"] == 22, "Longitude"]
+shops_df.loc[shops_df["KM2 ID"] == 22, "Latitude"] = rio_lat.transform(lambda x: latitud_prefix+"."+str(x).split(latitud_prefix)[1])
+shops_df.loc[shops_df["KM2 ID"] == 22, "Longitude"] = rio_lon.transform(lambda x: longitud_prefix+"."+str(x).split(longitud_prefix)[1])
+shops_df.to_excel("./Raw-Shops-Deliveries-fixed.xlsx")
