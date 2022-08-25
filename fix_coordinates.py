@@ -17,6 +17,9 @@ shops_df = pd.read_excel("./Raw-Shops-Deliveries.xlsx", dtype={"Latitude": str, 
 
 rio_lat = shops_df.loc[shops_df["KM2 ID"] == 22, "Latitude"]
 rio_lon = shops_df.loc[shops_df["KM2 ID"] == 22, "Longitude"]
+rio_id  = shops_df.loc[shops_df["KM2 ID"] == 22, "Shop ID"]
 shops_df.loc[shops_df["KM2 ID"] == 22, "Latitude"] = rio_lat.transform(lambda x: latitud_prefix+"."+str(x).split(latitud_prefix)[1])
 shops_df.loc[shops_df["KM2 ID"] == 22, "Longitude"] = rio_lon.transform(lambda x: longitud_prefix+"."+str(x).split(longitud_prefix)[1])
+shops_df.loc[shops_df["KM2 ID"] == 22, "Shop ID"] = rio_id.transform(lambda x: str(x)[:str(x).find("3") + 1] + "D" + str(x)[str(x).find("3")+1:])
+
 shops_df.to_excel("./Raw-Shops-Deliveries-fixed.xlsx")
