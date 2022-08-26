@@ -12,7 +12,7 @@ def to_american_date(date: str):
     r = find_nth(date, "/", 2)
     d = date[l:r]
     m = str(int(date[r + 1:date.find(" ")]))
-    return m + "/" + d + "/" + date[:l - 1] + " " + date[date.find(" ") + 1:]
+    return d + "/" + date[:l - 1] + "/" + m + " " + date[date.find(" ") + 1:]
 
 def to_yyyy(date : str):
 
@@ -83,10 +83,14 @@ def preprocess_deliveries(df: pd.DataFrame):
 # disruptions_df = pd.read_excel("./Deliveries_disruptions.xlsx", "Hoja3")
 
 
-merged = pd.read_excel("./Merged_5.xlsx")
-merged.drop_duplicates(subset=["KM2 ID","ID.1","Street ID","Shop ID"], keep="first").to_excel("./Merged_final.xlsx")
+# merged = pd.read_excel("./Merged_5.xlsx")
+# merged.drop_duplicates(subset=["KM2 ID","ID.1","Street ID","Shop ID"], keep="first").to_excel("./Merged_final.xlsx")
 
-
+ups = pd.read_excel("./Merged_final.xlsx" ,dtype={"Ended At":str})
+# ojo = ups.loc[ups["KM2 ID"] == 5]["Ended At"].transform(lambda x: to_american_date(x))
+# ups.loc[ups["KM2 ID"] == 5]["Ended At"] = ojo
+ups["Ended At"] = ups.apply(lambda x: to_american_date(x["Ended At"]) if x["KM2 ID"] == 5 else x["Ended At"], axis=1)
+ups.to_excel("./Merged_final.xlsx")
 # ["KM2 ID","ID.1","Street ID","Shop ID","Started At","Ended At","Vehicle Type","Divering Company","Product Delivered","Refrigerated Vehicle","Boxes Delivered","Delivery Type","Equipment","Number of Trips","Notes","Latitude","Longitude","Delivery Key","Distance to Shop","is_out_of_segment","shops_served"]
 # ["ID","KM2 ID","ID.1","Street ID","Shop ID","Started At","Ended At","Duration","Vehicle Type","Divering Company","Product Delivered","Refrigerated Vehicle","Boxes Delivered","Delivery Type","Equipment","Number of Trips","Notes","Latitude","Longitude","Delivery Key","Distance to Shop","is_out_of_segment","shops_served","disruption_count","delivery_count"]
 
