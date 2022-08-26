@@ -8,8 +8,8 @@ def find_nth(string, to_find, n):
     return start
 
 def to_american_date(date: str):
-    l = find_nth(date, "-", 1) + 1
-    r = find_nth(date, "-", 2)
+    l = find_nth(date, "/", 1) + 1
+    r = find_nth(date, "/", 2)
     d = date[l:r]
     m = str(int(date[r + 1:date.find(" ")]))
     return m + "/" + d + "/" + date[:l - 1] + " " + date[date.find(" ") + 1:]
@@ -24,7 +24,11 @@ def to_yyyy(date : str):
     y = date[l+1:r]
     return date[:l] + "/20" + y + date[r:]
 
-
+def remove_zero_padding(date: str):
+    l = find_nth(date, "/", 1) + 1
+    r = find_nth(date, "/", 2)
+    m = str(int(date[l:r]))
+    return date[:l] + m + date[r:]
 
 def preprocess_deliveries(df: pd.DataFrame):
     print("-----Preprocessing Raw-Deliveries.xlsx-----")
@@ -37,32 +41,50 @@ def preprocess_deliveries(df: pd.DataFrame):
     # Then we add the missing coordinates for Rio
     df = df.set_index("Delivery Key").fillna(fixed_coordinates.set_index("Shop ID"))
     print("result", df.loc[df["KM2 ID"] == "22", "Latitude"])
-    df.to_excel("./Raw-Deliveries.xlsx")
+    df.to_excel("./Raw-Deliveries-fixed.xlsx")
 
     print("-----------------Done!----------------")
 
 
-merged = pd.read_excel("./Merged_1.xlsx")
-merged["Vehicle Type"] = merged["Vehicle Type"].str.capitalize()
-merged["Notes"] = merged["Notes"].str.capitalize()
-merged["Started At"] = merged["Started At"].transform(lambda x: to_yyyy(x))
-merged["Ended At"] = merged["Ended At"].transform(lambda x: to_yyyy(x))
-merged.drop_duplicates(keep="first").to_excel("./Merged_2.xlsx")
 
 
-# deliveries_df = pd.read_excel("./Raw-Deliveriesoriginal.xlsx")
+# merged = pd.read_excel("./Merged_3.xlsx")
+# merged["Started At"] = merged["Started At"].transform(lambda x: remove_zero_padding(x))
+# merged["Ended At"] = merged["Ended At"].transform(lambda x: remove_zero_padding(x))
+# merged.drop_duplicates(keep="last", subset=["KM2 ID","ID.1","Street ID","Shop ID","Started At","Ended At","Vehicle Type","Divering Company","Product Delivered","Refrigerated Vehicle","Boxes Delivered","Delivery Type","Equipment","Number of Trips","Notes","Latitude","Longitude","Delivery Key","Distance to Shop","is_out_of_segment","shops_served"]).to_excel("./Merged_4.xlsx")
+# merged["Vehicle Type"] = merged["Vehicle Type"].str.capitalize()
+# merged["Notes"] = merged["Notes"].str.capitalize()
+# merged["Started At"] = merged["Started At"].transform(lambda x: to_yyyy(x))
+# merged["Ended At"] = merged["Ended At"].transform(lambda x: to_yyyy(x))
+# merged.drop_duplicates(keep="first").to_excel("./Merged_2.xlsx")
+
+# deliveries_df = pd.read_excel("./Raw-Deliveries.xlsx")
+# deliveries_df["Started At"] = deliveries_df["Started At"].transform(lambda x: x if x[0] == '7' else to_american_date(x))
+# deliveries_df["Ended At"] = deliveries_df["Ended At"].transform(lambda x: x if x[0] == '7' else to_american_date(x))
+# preprocess_deliveries(deliveries_df)
+
 # disruptions_df = pd.read_excel("./Disruptions_unique_duration.xlsx")
-
-#disruptions_df = disruptions_df.drop(columns=["ID","disruption_count","delivery_count"]).drop_duplicates(keep="first")
+# disruptions_df = disruptions_df.drop(columns=["ID","disruption_count","delivery_count"]).drop_duplicates(keep="first")
 # print(disruptions_df["Started At"])
 # print(disruptions_df["Started At"].transform(lambda x: x if x[0] == '7' else to_american_date(x)))
+# disruptions_df["Started At"] = disruptions_df["Started At"].transform(lambda x: remove_zero_padding(x))
+# disruptions_df["Ended At"] = disruptions_df["Ended At"].transform(lambda x: remove_zero_padding(x))
 # disruptions_df["Started At"] = disruptions_df["Started At"].transform(lambda x: x if x[0] == '7' else to_american_date(x))
 # disruptions_df["Ended At"] = disruptions_df["Ended At"].transform(lambda x: x if x[0] == '7' else to_american_date(x))
+# disruptions_df["Vehicle Type"] = disruptions_df["Vehicle Type"].str.capitalize()
+# disruptions_df["Notes"] = disruptions_df["Notes"].str.capitalize()
+# disruptions_df["Started At"] = disruptions_df["Started At"].transform(lambda x: to_yyyy(x))
+# disruptions_df["Ended At"] = disruptions_df["Ended At"].transform(lambda x: to_yyyy(x))
+# 
+# disruptions_df.drop_duplicates(keep="last", subset=["KM2 ID","ID.1","Street ID","Shop ID","Started At","Ended At","Vehicle Type","Divering Company","Product Delivered","Refrigerated Vehicle","Boxes Delivered","Delivery Type","Equipment","Number of Trips","Notes","Latitude","Longitude","Delivery Key","Distance to Shop","is_out_of_segment","shops_served"]).to_excel("./Merged_5.xlsx")
+
 
 # disruptions_df.to_excel("./Disruptions_unique_final.xlsx")
 # disruptions_df = pd.read_excel("./Deliveries_disruptions.xlsx", "Hoja3")
 
-# preprocess_deliveries(deliveries_df)
+
+merged = pd.read_excel("./Merged_5.xlsx")
+merged.drop_duplicates(subset=["KM2 ID","ID.1","Street ID","Shop ID"], keep="first").to_excel("./Merged_final.xlsx")
 
 
 # ["KM2 ID","ID.1","Street ID","Shop ID","Started At","Ended At","Vehicle Type","Divering Company","Product Delivered","Refrigerated Vehicle","Boxes Delivered","Delivery Type","Equipment","Number of Trips","Notes","Latitude","Longitude","Delivery Key","Distance to Shop","is_out_of_segment","shops_served"]
